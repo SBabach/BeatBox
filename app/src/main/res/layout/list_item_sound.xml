@@ -3,16 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.babach.beatbox.SoundViewModel" />
-
     </data>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="120dp"
+        android:onClick="@{()->viewModel.onButtonClicked()}"
         android:text="@{viewModel.title}"
         tools:text="Sound name" />
 

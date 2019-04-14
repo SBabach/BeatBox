@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.babach.beatbox.databinding.FragmentBeatBoxBinding;
 import com.babach.beatbox.databinding.ListItemSoundBinding;
@@ -30,6 +32,7 @@ public class BeatBoxFragment extends Fragment
     public void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         mBeatBox = new BeatBox(getActivity());
     }
 
@@ -38,13 +41,46 @@ public class BeatBoxFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState)
     {
-        FragmentBeatBoxBinding binding = DataBindingUtil.inflate(inflater,
+        final FragmentBeatBoxBinding binding = DataBindingUtil.inflate(inflater,
                 R.layout.fragment_beat_box, container, false);
+        setPlaybackSpeedTxt(binding.speedRateValueTxt, mBeatBox.getSpeedRate());
         binding.recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         binding.recyclerView.setAdapter(new SoundAdapter(mBeatBox.getSounds()));
+        binding.speedRateSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+                mBeatBox.setSpeedRate(seekBar.getProgress());
+                setPlaybackSpeedTxt(binding.speedRateValueTxt, mBeatBox.getSpeedRate());
+            }
+        });
         return binding.getRoot();
     }
 
+    private void setPlaybackSpeedTxt(TextView textView, float playbackSpeed)
+    {
+        textView.setText("Playback speed: " + playbackSpeed + "x");
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mBeatBox.release();
+    }
 
     private class SoundHolder extends RecyclerView.ViewHolder
     {
